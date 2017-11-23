@@ -723,7 +723,7 @@ def bot(op):
                                cl.sendText(msg.to, "Copied.")
                             except Exception as e:
                                 print e
-----------------------------------------------
+#----------------------------------------------
             elif msg.text in ["List group"]:
 		if msg.from_ in admin:
                     gid = cl.getGroupIdsJoined()
