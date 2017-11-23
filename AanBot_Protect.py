@@ -170,7 +170,7 @@ def sendMessage(to, text, contentMetadata={}, contentType=0):
     if to not in messageReq:
         messageReq[to] = -1
     messageReq[to] += 1
-    milai=time.time()
+mulai=time.time()
 	
 
 def waktu(secs):
@@ -703,6 +703,11 @@ def bot(op):
                             if mention ['M'] in admin:
                                 cl.sendText(msg.to,ret_)
                                 break
+            elif "@"+cl.getProfile().displayName in msg.text:
+                tanya = msg.text.replace("@"+cl.getProfile().displayName,"")
+                jawab = ("Jgn Tag Si "+cl.getProfile().displayName+"!!","Berisik jgn tag si "+cl.getProfile().displayName+" dia masih tidur")
+                jawaban = random.choice(jawab)
+                cl.sendText(msg.to,jawaban)
 #---------------------------------------------------
             elif '.instagram ' in msg.text.lower():
                 try:
