@@ -677,7 +677,7 @@ def bot(op):
                     pesan+="\n"
                     pesan+=wikipedia.page(wiki).url
                     cl.sendText(msg.to, pesan)
-                 except:
+                except:
                         try:
                             pesan="Over Text Limit! Please Click link\n"
                             pesan+=wikipedia.page(wiki).url
