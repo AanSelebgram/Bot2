@@ -7,34 +7,35 @@ from datetime import datetime
 import time,random,sys,json,codecs,threading,glob,re,ast,os,subprocess,requests,urllib,wikipedia
 from gtts import gTTS
 import goslate
+import time
 
 
 cl = LINETCR.LINE()
-cl.login(qr=True)
+cl.login(token='EmHCNHLKXReR3GUduca1.UlrDCGkj7dxSpRrrWVSpKq.g3vEaSk5iGVvPWOhpgRVkHPpLhOOwoso1OQ5i+27Iuw=')
 #cl.login(token='')
 cl.loginResult()
 print "Cl-Login Success\n"
 
 ki = LINETCR.LINE()
-ki.login(qr=True)
+ki.login(token='EmzlLew0XTW8IODPhwRe.7oUShdLcs9TUvO5sMkXNpG.ilwEXwSYByrqIwZgDLnuJ97XA1wVn16Z8shYnSsButY')
 #ki.login(token='')
 ki.loginResult()
 print "Ki-Login Success\n"
 
 kk = LINETCR.LINE()
-kk.login(qr=True)
+kk.login(token='EmwVS4A5cErcj6NZ939e.uHwIvq3v1iyKQZqnNrhKFG.vllaB0gxYptn8mEr+F0b1/+TSN46FCfTV5Qtm/fEXig=')
 #kk.login(token='')
 kk.loginResult()
 print "Kk-Login Success\n"
 
 kc = LINETCR.LINE()
-kc.login(qr=True)
+kc.login(token='Em8Uj1MRqCDmBO5XiYu5.T2Obu6kd2POuq9/WqXGtnq.Eaqof4oV8GKOTFkpRESnEuh0odD3CEpkOVmeKezp3N0=')
 #kc.login(token='')
 kc.loginResult()
 print "Kc-Login Success\n"
 
 kr = LINETCR.LINE()
-kr.login(qr=True)
+kr.login(token='EmLV5twOWfR6ybWCUO0b.sDTrH/zMSMOdJJyRwe3qQW.eJvaeOQigQYb4ukESxrJdzaTHRe1I9LExmgCz5WfzJ4=')
 #kr.login(token='')
 kr.loginResult()
 print "Kr-Login Success\n\n=====[Sukses All Login]====="
@@ -83,7 +84,28 @@ helpMessage ="""
 ►Leave all group
 ►Auto join:on / off
 ►All join / (Cb1/2/3 join)
+►Ats
 
+[Comand Spesial]
+►/ten
+►/tid
+►Steal home @
+►Steal dp @
+►copy @
+►Backup
+►Mimic on
+►Mimic off
+►Target @
+►Del target @
+►Target list
+►/say
+►/musik
+►.lyric
+►.instagram
+►music
+►wikipedia
+►runtime
+►Check:
 By : Aan Jutawan
 """
 
@@ -113,6 +135,28 @@ wait = {
     "BlGroup":{}
 }
 
+wait2 = {
+    'readPoint':{},
+    'readMember':{},
+    'setTime':{},
+    'ROM':{}
+    }
+
+wait3 = {
+    "copy":False,
+    "copy2":"target",
+    "target":{}
+    }
+
+setTime = {}
+setTime = wait2['setTime']
+
+contact = cl.getProfile()
+backup = cl.getProfile()
+backup.displayName = contact.displayName
+backup.statusMessage = contact.statusMessage                        
+backup.pictureStatus = contact.pictureStatus
+
 def restart_program():
     python = sys.executable
     os.execl(python, python, * sys.argv)
@@ -126,6 +170,13 @@ def sendMessage(to, text, contentMetadata={}, contentType=0):
     if to not in messageReq:
         messageReq[to] = -1
     messageReq[to] += 1
+    milai=time.time()
+	
+
+def waktu(secs):
+    mins, secs = divmod(secs,60)
+    hours, mins = divmod(mins,60)
+    return '%02d Jam %02d Menit %02d Detik' % (hours, mins, secs)
 
 
 def bot(op):
@@ -595,6 +646,50 @@ def bot(op):
             elif msg.text in ["Key","help","Help"]:
                 cl.sendText(msg.to,helpMessage)
 #--------------------------------------------------------
+            elif "/ten " in msg.text:
+                txt = msg.text.replace("/ten ","")
+                try:
+                    gs = goslate.Goslate()
+                    trs = gs.translate(txt,'en')
+                    cl.sendText(msg.to,trs)
+                    print '[Command] Translate EN'
+                except:
+                    cl.sendText(msg.to,'Error.')
+#-----------------------------------------------
+            elif "/tid " in msg.text:
+                txt = msg.text.replace("/tid ","")
+                try:
+                    gs = goslate.Goslate()
+                    trs = gs.translate(txt,'id')
+                    cl.sendText(msg.to,trs)
+                    print '[Command] Translate ID'
+                except:
+                    cl.sendText(msg.to,'Error.')
+#--------------------------------------------------------
+            elif 'wikipedia ' in msg.text.lower():
+                try:
+                    wiki = msg.text.lower().replace("wikipedia ","")
+                    wikipedia.set_lang("id")
+                    pesan="Title ("
+                    pesan+=wikipedia.page(wiki).title
+                    pesan+=")\n\n"
+                    pesan+=wikipedia.summary(wiki, sentences=1)
+                    pesan+="\n"
+                    pesan+=wikipedia.page(wiki).url
+                    cl.sendText(msg.to, pesan)
+                 except:
+                        try:
+                            pesan="Over Text Limit! Please Click link\n"
+                            pesan+=wikipedia.page(wiki).url
+                            cl.sendText(msg.to, pesan)
+                        except Exception as e:
+                            cl.sendText(msg.to, str(e))
+#--------------------------------------------------------
+            elif msg.text.lower() == 'runtime':
+                eltime = time.time() - mulai
+                van = "Bot sudah berjalan selama "+waktu(eltime)
+                cl.sendText(msg.to,van) 
+#--------------------------------------------------------
             elif 'MENTION' in msg.contentMetadata.keys() != none:
                     if wait["Mention"] == True:
                         contact = cl.getContact(msg.from_)
@@ -608,6 +703,62 @@ def bot(op):
                             if mention ['M'] in admin:
                                 cl.sendText(msg.to,ret_)
                                 break
+#---------------------------------------------------
+            elif '.instagram ' in msg.text.lower():
+                try:
+                    instagram = msg.text.lower().replace(".instagram ","")
+                    html = requests.get('https://www.instagram.com/' + instagram + '/?')
+                    soup = BeautifulSoup(html.text, 'html5lib')
+                    data = soup.find_all('meta', attrs={'property':'og:description'})
+                    text = data[0].get('content').split()
+                    data1 = soup.find_all('meta', attrs={'property':'og:image'})
+                    text1 = data1[0].get('content').split()
+                    user = "Name: " + text[-2] + "\n"
+                    user1 = "Username: " + text[-1] + "\n"
+                    followers = "Followers: " + text[0] + "\n"
+                    following = "Following: " + text[2] + "\n"
+                    post = "Post: " + text[4] + "\n"
+                    link = "Link: " + "https://www.instagram.com/" + instagram
+                    detail = "========INSTAGRAM INFO USER========\n"
+                    details = "\n========INSTAGRAM INFO USER========"
+                    cl.sendText(msg.to, detail + user + user1 + followers + following + post + link + details)
+                    cl.sendImageWithURL(msg.to, text1[0])
+                except Exception as njer:
+                	cl.sendText(msg.to, str(njer))
+#-----------------------------------------------
+            elif 'music ' in msg.text.lower():
+                try:
+                    songname = msg.text.lower().replace('music ','')
+                    params = {'songname': songname}
+                    r = requests.get('http://ide.fdlrcn.com/workspace/yumi-apis/joox?' + urllib.urlencode(params))
+                    data = r.text
+                    data = json.loads(data)
+                    for song in data:
+                        hasil = 'This is Your Music\n'
+                        hasil += 'Judul : ' + song[0]
+                        hasil += '\nDurasi : ' + song[1]
+                        hasil += '\nLink Download : ' + song[4]
+                        cl.sendText(msg.to, hasil)
+                        cl.sendText(msg.to, "Please Wait for audio...")
+                        cl.sendAudioWithURL(msg.to, song[4])
+		except Exception as njer:
+		        cl.sendText(msg.to, str(njer))
+#------------------------------------------------
+            elif '.lyric ' in msg.text.lower():
+                try:
+                    songname = msg.text.lower().replace('.lyric ','')
+                    params = {'songname': songname}
+                    r = requests.get('http://ide.fdlrcn.com/workspace/yumi-apis/joox?' + urllib.urlencode(params))
+                    data = r.text
+                    data = json.loads(data)
+                    for song in data:
+                        hasil = 'Lyric Lagu ('
+                        hasil += song[0]
+                        hasil += ')\n\n'
+                        hasil += song[5]
+                        cl.sendText(msg.to, hasil)
+                except Exception as wak:
+                        cl.sendText(msg.to, str(wak))
 #--------------------------------------------------------
             elif "Steal dp @" in msg.text:
 		print "[Command]dp executing"
@@ -723,6 +874,156 @@ def bot(op):
                                cl.sendText(msg.to, "Copied.")
                             except Exception as e:
                                 print e
+#-----------------------------------------------
+            elif msg.text in ["Backup","backup"]:
+                try:
+                    cl.updateDisplayPicture(backup.pictureStatus)
+                    cl.updateProfile(backup)
+                    cl.sendText(msg.to, "Refreshed.")
+                except Exception as e:
+                    cl.sendText(msg.to, str(e))
+            elif "rejectall" in msg.text:
+                    X = cl.getGroupIdsInvited()
+                    for i in X:           	    
+			cl.rejectGroupInvitation(i)
+#------------------------------------------------
+            elif msg.text == 'Ats':
+                group = cl.getGroup(msg.to)
+                nama = [contact.mid for contact in group.members]
+                nm1, nm2, nm3, nm4, nm5, jml = [], [], [], [], [], len(nama)
+                if jml <= 100:
+                  MENTION(msg.to, nama)
+
+                elif jml > 100 and jml < 200:
+                    for i in range(0,100):
+                        nm1 += [nama[i]]
+                    MENTION(msg.to, nm1)
+                    for j in range(100, len(nama)-1):
+                        nm2 += [nama[j]]
+                    MENTION(msg.to, nm2)
+
+                elif jml > 200 and jml < 300:
+                    for i in range(0,100):
+                        nm1 += [nama[i]]
+                    MENTION(msg.to, nm1)
+                    for j in range(100, 200): 
+                        nm2 += [nama[j]]
+                    MENTION(msg.to, nm2)
+                    for x in range(200, len(nama)-1):
+                        nm3 += [nama[x]]
+                    MENTION(msg.to, nm3)
+
+	 	elif jml > 300 and jml < 400:
+		    for i in range(0,100):
+                        nm1 += [nama[i]]
+                    MENTION(msg.to, nm1)
+                    for j in range(100, 200):
+			nm2 += [nama[j]]
+                    MENTION(msg.to, nm2)
+                    for x in range(200, 300):
+                        nm3 += [nama[x]]
+                    MENTION(msg.to, nm3)
+                    for y in range(300, len(nama)-1):
+			nm4 += [nama[y]]
+                    MENTION(msg.to, nm4)
+
+		elif jml > 400 and jml < 500:
+                    for i in range(0,100):
+			nm1 += [nama[i]]
+                    MENTION(msg.to, nm1)
+                    for j in range(100, 200):
+                        nm2 += [nama[j]]
+                    MENTION(msg.to, nm2)
+                    for x in range(200, 300):
+                        nm3 += [nama[x]]
+                    MENTOON(msg.to, nm3)
+                    for y in range(300, 400):
+                        nm4 += [nama[y]]
+                    MENTION(msg.to, nm4)
+                    for z in ramge(400, len(nama)-1):
+                        nm5 += [nama[z]]
+                    MENTION(msg.to, nm5)
+		cl.sendText(msg.to,'Member melebihi batas.')
+                cnt = Message()
+                cnt.text = "Done : " + str(jml) +  " Members"
+                cnt.to = msg.to
+                cl.sendMessage(cnt)
+#----------------------------------------------------------------------------
+#----------------------------------------------
+            elif msg.text in ["Mimic on","mimic on"]:
+                    if wait3["copy"] == True:
+                        if wait["lang"] == "JP":
+                            cl.sendText(msg.to,"Already on")
+                        else:
+                            cl.sendText(msg.to,"Mimic On")
+                    else:
+                    	wait3["copy"] = True
+                    	if wait["lang"] == "JP":
+                    		cl.sendText(msg.to,"Mimic On")
+                        else:
+    	                	cl.sendText(msg.to,"Already on")
+#----------------------------------------------
+            elif msg.text in ["Mimic off","mimic:off"]:
+                    if wait3["copy"] == False:
+                        if wait["lang"] == "JP":
+                            cl.sendText(msg.to,"Already on")
+                        else:
+                            cl.sendText(msg.to,"Mimic Off")
+                    else:
+                    	wait3["copy"] = False
+                    	if wait["lang"] == "JP":
+                    		cl.sendText(msg.to,"Mimic Off")
+                        else:
+	                    	cl.sendText(msg.to,"Already on")
+#---------------------------------------------
+            elif msg.text in ["Target list"]:
+                        if wait3["target"] == {}:
+                            cl.sendText(msg.to,"nothing")
+                        else:
+                            mc = "Target mimic user\n"
+                            for mi_d in wait3["target"]:
+                                mc += "✔️ "+cl.getContact(mi_d).displayName + "\n"
+                            cl.sendText(msg.to,mc)
+#----------------------------------------------
+            elif "Mimic target " in msg.text:
+                        if wait3["copy"] == True:
+                            siapa = msg.text.replace("Mimic target ","")
+                            if siapa.rstrip(' ') == "me":
+                                wait3["copy2"] = "me"
+                                cl.sendText(msg.to,"Mimic change to me")
+                            elif siapa.rstrip(' ') == "target":
+                                wait3["copy2"] = "target"
+                                cl.sendText(msg.to,"Mimic change to target")
+                            else:
+                                cl.sendText(msg.to,"I dont know")
+#-----------------------------------------------
+            elif "Target @" in msg.text:
+                        target = msg.text.replace("Target @","")
+                        gc = cl.getGroup(msg.to)
+                        targets = []
+                        for member in gc.members:
+                            if member.displayName == target.rstrip(' '):
+                                targets.append(member.mid)
+                        if targets == []:
+                            cl.sendText(msg.to, "User not found")
+                        else:
+                            for t in targets:
+                                wait3["target"][t] = True
+                            cl.sendText(msg.to,"Target added")
+#------------------------------------------------
+            elif "Del target @" in msg.text:
+                        target = msg.text.replace("Del target @","")
+                        gc = cl.getGroup(msg.to)
+                        targets = []
+                        for member in gc.members:
+                            if member.displayName == target.rstrip(' '):
+                                targets.append(member.mid)
+                        if targets == []:
+                            cl.sendText(msg.to, "User not found")
+                        else:
+                            for t in targets:
+                                del wait3["target"][t]
+                            cl.sendText(msg.to,"Target deleted")
 #----------------------------------------------
             elif msg.text in ["List group"]:
 		if msg.from_ in admin:
@@ -1204,7 +1505,7 @@ def bot(op):
 		    cl.sendText(msg.to,"Sape lu!")
 
 #--------------------------------------------------------
-	    elif msg.text in ["Cb Like"]:
+	    elif msg.text in ["Aan Like"]:
 		try:
 		    print "activity"
 		    url = cl.activity(limit=1)
@@ -1213,10 +1514,10 @@ def bot(op):
 		    ki.like(url['result']['posts'][0]['userInfo']['mid'], url['result']['posts'][0]['postInfo']['postId'], likeType=1001)
 		    kk.like(url['result']['posts'][0]['userInfo']['mid'], url['result']['posts'][0]['postInfo']['postId'], likeType=1001)
 		    kc.like(url['result']['posts'][0]['userInfo']['mid'], url['result']['posts'][0]['postInfo']['postId'], likeType=1001)
-		    cl.comment(url['result']['posts'][0]['userInfo']['mid'], url['result']['posts'][0]['postInfo']['postId'], "Mau Bot Protect?\nFollow ig : @rid1bdbx\nLalu dm ke dia")
-		    ki.comment(url['result']['posts'][0]['userInfo']['mid'], url['result']['posts'][0]['postInfo']['postId'], "Mau Bot Protect?\nFollow ig : @rid1bdbx\nLalu dm ke dia")
-		    kk.comment(url['result']['posts'][0]['userInfo']['mid'], url['result']['posts'][0]['postInfo']['postId'], "Mau Bot Protect?\nFollow ig : @rid1bdbx\nLalu dm ke dia")
-		    kc.comment(url['result']['posts'][0]['userInfo']['mid'], url['result']['posts'][0]['postInfo']['postId'], "Mau Bot Protect?\nFollow ig : @rid1bdbx\nLalu dm ke dia")
+		    cl.comment(url['result']['posts'][0]['userInfo']['mid'], url['result']['posts'][0]['postInfo']['postId'], "Mau Bot Protect?\nFollow ig : @Alrahmanto_Selebgram\nLalu dm ke dia")
+		    ki.comment(url['result']['posts'][0]['userInfo']['mid'], url['result']['posts'][0]['postInfo']['postId'], "Mau Bot Protect?\nFollow ig : @Alrahmanto_Selebgram\nLalu dm ke dia")
+		    kk.comment(url['result']['posts'][0]['userInfo']['mid'], url['result']['posts'][0]['postInfo']['postId'], "Mau Bot Protect?\nFollow ig : @Alrahmanto_Selebgram\nLalu dm ke dia")
+		    kc.comment(url['result']['posts'][0]['userInfo']['mid'], url['result']['posts'][0]['postInfo']['postId'], "Mau Bot Protect?\nFollow ig : @Alrahmanto_Selebgram\nLalu dm ke dia")
 		    cl.sendText(msg.to, "Success~")
 		except Exception as E:
 		    try:
@@ -1247,10 +1548,10 @@ def bot(op):
 		    cl.sendText(msg.to,"Lu Sapa!")
 #--------------------------------------------------------
             elif msg.text in ["Absen"]:
-		cl.sendText(msg.to,"Pasukan absen!!")
-                ki.sendText(msg.to,"Cb1 Hadiir  \(ˆ▿ˆ)/")
-                kk.sendText(msg.to,"Cb2 Hadiir  \(ˆ▿ˆ)/")
-                kc.sendText(msg.to,"Cb3 Hadiir  \(ˆ▿ˆ)/")
+		cl.sendText(msg.to,"Team Aan Bot")
+                ki.sendText(msg.to,"Aan Hadiir  \(ˆ▿ˆ)/")
+                kk.sendText(msg.to,"Jutawan Hadiir  \(ˆ▿ˆ)/")
+                kc.sendText(msg.to,"Selebgram Hadiir  \(ˆ▿ˆ)/")
 
 #--------------------------------------------------------
             elif msg.text in ["Sp","Speed","speed"]:
