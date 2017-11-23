@@ -8,7 +8,7 @@ import time,random,sys,json,codecs,threading,glob,re,ast,os,subprocess,requests,
 from gtts import gTTS
 import goslate
 import time
-
+from bs4 import BeautifulSoup
 
 cl = LINETCR.LINE()
 cl.login(token='EmHCNHLKXReR3GUduca1.UlrDCGkj7dxSpRrrWVSpKq.g3vEaSk5iGVvPWOhpgRVkHPpLhOOwoso1OQ5i+27Iuw=')
