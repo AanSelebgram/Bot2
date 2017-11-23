@@ -93,8 +93,8 @@ Amid = ki.getProfile().mid
 Bmid = kk.getProfile().mid
 Cmid = kc.getProfile().mid
 Bots=[mid,Amid,Bmid,Cmid]
-Creator="ud8c4d53f17999c8e029827b67af3b06a"
-admin=["Your MID here!"]
+Creator="ud8c4d53f17999c8e029827b67af3b06a","ub76a0153a283da9a1443dfb043181335"
+admin=["ub76a0153a283da9a1443dfb043181335"]
 
 wait = {
     "LeaveRoom":True,
