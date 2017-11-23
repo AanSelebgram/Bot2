@@ -4,7 +4,10 @@
 import LINETCR
 from LINETCR.lib.curve.ttypes import *
 from datetime import datetime
-import time,random,sys,json,codecs,threading,glob,re,ast,os,subprocess,requests
+import time,random,sys,json,codecs,threading,glob,re,ast,os,subprocess,requests,urlib,wikipedia
+from gtts import gTTS
+import goslate
+
 
 cl = LINETCR.LINE()
 cl.login(qr=True)
@@ -40,7 +43,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 helpMessage ="""
-========[Cat_Bot]========
+========[Bot Aan]========
 
 [Command In Group]
 ►Creator
@@ -81,7 +84,7 @@ helpMessage ="""
 ►Auto join:on / off
 ►All join / (Cb1/2/3 join)
 
-By : Cat_Bot
+By : Aan Jutawan
 """
 
 KAC=[cl,ki,kk,kc]
@@ -105,6 +108,7 @@ wait = {
     "Qr":True,
     "Timeline":True,
     "Contact":True,
+    "MENTION":True,
     "lang":"JP",
     "BlGroup":{}
 }
@@ -591,6 +595,135 @@ def bot(op):
             elif msg.text in ["Key","help","Help"]:
                 cl.sendText(msg.to,helpMessage)
 #--------------------------------------------------------
+            elif 'MENTION' in msg.contentMetadata.keys() != none:
+                    if wait["Mention"] == True:
+                        contact = cl.getContact(msg.from_)
+                        cName = contact.displayName
+                        balas = ["Jangan tag dulu, gue lagi anu",cName + "Ngapain Tag?", cName + "Kalo pemting Pc aja","apa sayang tag tag segala, kangen yah :v"]
+                        ret_ = "apa?" + random.choice(balas)
+                        name = re_findall(r'@(\w+)', msg.text)
+                        mention = ast.literal_eval(msg.contentMetadata['MENTION'])
+                        mentionees = mention['MENTIONES']
+                        for mention in mentionees:
+                            if mention ['M'] in admin:
+                                cl.sendText(msg.to,ret_)
+                                break
+#--------------------------------------------------------
+            elif "Steal dp @" in msg.text:
+		print "[Command]dp executing"
+                _name = msg.text.replace("Steal dp @","")
+                _nametarget = _name.rstrip(' ')
+                gs = cl.getGroup(msg.to)
+                targets = []
+                for g in gs.members:
+                    if _nametarget == g.displayName:
+                        targets.append(g.mid)
+		if targets == []:
+                    cl.sendText(msg.to,"Contact not found")
+                else:
+		    for target in targets:
+                        try:
+                            contact = cl.getContact(target)
+                            path = "http://dl.profile.line-cdn.net/" + contact.pictureStatus
+			    cl.sendImageWithURL(msg.to, path)
+                        except:
+                            pass
+                print "[Command]dp executed"
+#-----------------------------------------------------
+	    elif "Steal home @" in msg.text:
+                print "[Command]dp executing"
+                _name = msg.text.replace("Steal home @","")
+                _nametarget = _name.rstrip(' ')
+                gs = cl.getGroup(msg.to)
+                targets = []
+                for g in gs.members:
+                    if _nametarget == g.displayName:
+                        targets.append(g.mid)
+                if targets == []:
+                   cl.sendText(msg.to,"Contact not found")
+                else:
+                    for target in targets:
+                        try:
+                            contact = cl.getContact(target)
+                            cu = cl.channel.getCover(target)
+                            path = str(cu)
+                            cl.sendImageWithURL(msg.to, path)
+                        except:
+                            pass
+                print "[Command]dp executed"
+
+#-----------------------------------------------
+	    elif "/say " in msg.text:
+                 psn = msg.text.replace("/say ","")
+                 tts = gTTS(psn, lang='id', slow=False)
+                 tts.save('tts.mp3')
+                 cl.sendAudio(msg.to, 'tts.mp3')
+
+#-----------------------------------------------
+
+	    elif '/musik ' in msg.text.lower():
+                try:
+                    songname = msg.text.lower().replace('/musik ','')
+                    params = {'songname': songname}
+                    r = requests.get('http://ide.fdlrcn.com/workspace/yumi-apis/joox?' + urllib.urlencode(params))
+                    data = r.text
+                    data = json.loads(data)
+                    for song in data:
+                        hasil = 'This is Your Music\n'
+                        hasil += 'Judul : ' + song[0]
+                        hasil += '\nDurasi : ' + song[1]
+                        hasil += '\nLink Download : ' + song[4]
+                        cl.sendText(msg.to, hasil)
+                        cl.sendText(msg.to, "Please Wait for audio...")
+                        cl.sendAudioWithURL(msg.to, song[4])
+                except Exception as njer:
+                        cl.sendText(msg.to, str(njer))
+
+	    elif '/lirik ' in msg.text.lower():
+                try:
+                    songname = msg.text.lower().replace('/lirik ','')
+                    params = {'songname': songname}
+                    r = requests.get('http://ide.fdlrcn.com/workspace/yumi-apis/joox?' + urllib.urlencode(param))
+                    data = r.text
+                    data = json.loads(data)
+                    for song in data:
+                        hasil = song[5]
+                        cl.sendText(msg.to, hasil)
+                except Exception as njer:
+                        cl.sendText(msg.to, str(njer))
+            elif "Apakah " in msg.text:
+    		tanya = msg.text.replace("Apakah ","")
+    		jawab = ("Iya","Tidak")
+    		jawaban = random.choice(jawab)
+		tts = gTTS(text=jawaban, lang='id')
+		tts.save('tts.mp3')
+    		cl.sendAudio(msg.to,'tts.mp3')
+#--------------------------------------------------
+            elif "Check:" in msg.text:
+                    midd = msg.text.replace("Check:","")
+                    msg.contentType = 13
+                    msg.contentMetadata = {"mid":midd}
+                    cl.sendMessage(msg)
+#---------------------------------------------------
+            elif "copy @" in msg.text:
+                   print "[COPY] Ok"
+                   _name = msg.text.replace("copy @","")
+                   _nametarget = _name.rstrip('  ')
+                   gs = cl.getGroup(msg.to)
+                   targets = []
+                   for g in gs.members:
+                       if _nametarget == g.displayName:
+                           targets.append(g.mid)
+                   if targets == []:
+                       cl.sendText(msg.to, "Not Found...")
+                   else:
+                       for target in targets:
+                            try:
+                               cl.CloneContactProfile(target)
+                               cl.sendText(msg.to, "Copied.")
+                            except Exception as e:
+                                print e
+----------------------------------------------
             elif msg.text in ["List group"]:
 		if msg.from_ in admin:
                     gid = cl.getGroupIdsJoined()
