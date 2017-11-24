@@ -106,6 +106,19 @@ helpMessage ="""
 ►wikipedia
 ►runtime
 ►Check:
+►Myname:
+►Mybio:
+►kedapkedip
+►/youtube
+►Getname @
+►Creator gw
+►Lurking 
+►Lurkes
+►Cek 
+►Sider
+►Hack
+►/say-en
+►/say-id
 By : Aan Jutawan
 """
 
@@ -172,7 +185,31 @@ def sendMessage(to, text, contentMetadata={}, contentType=0):
     messageReq[to] += 1
 mulai=time.time()
 	
-
+def mention(to, nama):
+	aa = ""
+	bb = ""
+	strt = int(0)
+	akh = int(0)
+	nm = nama
+	print nm
+	for mm in nm:
+		akh = akh + 3
+		aa += """{"S":"""+json.dumps(str(strt))+""","E":"""+json.dumps(str(akh))+""","M","""+json.dumps(mm)+"),"""
+		strt = strt + 4
+		akh = akh + 1
+		bb += "@x \n"
+	aa = (aa[:int(len(aa)-1)])
+	msg = Message()
+	msg.to = to
+	msg.from_ = admin
+	msg.text = bb
+	msg.contentMetadata ={'MENTION':'{"MENTIONEES":['+aa+']}','EMTVER':'4'}
+	print msg
+	try:
+		cl.sendMessage(msg)
+	except Exception as error:
+		print error
+		
 def waktu(secs):
     mins, secs = divmod(secs,60)
     hours, mins = divmod(mins,60)
@@ -665,6 +702,52 @@ def bot(op):
                     print '[Command] Translate ID'
                 except:
                     cl.sendText(msg.to,'Error.')
+#-----------------------------------------
+            elif msg.text in ["Myname"]:
+                    h = cl.getContact(mid)
+                    cl.sendText(msg.to,"===[DisplayName]===\n" + h.displayName)
+#-----------------------------------------
+            elif msg.text in ["Mybio"]:
+                    h = cl.getContact(mid)
+                    cl.sendText(msg.to,"===[StatusMessage]===\n" + h.statusMessage)
+            elif "kedapkedip " in msg.text.lower():
+                txt = msg.text.replace("kedapkedip ", "")
+                t1 = "\xf4\x80\xb0\x82\xf4\x80\xb0\x82\xf4\x80\xb0\x82\xf4\x80\xb0\x82\xf4\x80\xa0\x81\xf4\x80\xa0\x81\xf4\x80\xa0\x81"
+                t2 = "\xf4\x80\x82\xb3\xf4\x8f\xbf\xbf"
+                cl.sendText(msg.to, t1 + txt + t2)
+            elif "/youtube " in msg.text:
+                query = msg.text.replace("/youtube ","")
+                with requests.session() as s:
+                    s.headers['user-agent'] = 'Mozilla/5.0'
+                    url = 'http://www.youtube.com/results'
+                    params = {'search_query': query}
+                    r = s.get(url, params=params)
+                    soup = BeautifulSoup(r.content, 'html5lib')
+                    hasil = ""
+                    for a in soup.select('.yt-lockup-title > a[title]'):
+                        if '&list=' not in a['href']:
+                            hasil += ''.join((a['title'],'\nhttp://www.youtube.com' + a['href'],'\n\n'))
+                    cl.sendText(msg.to,hasil)
+                    print '[Command] Youtube Search'
+            elif "Getname @" in msg.text:
+                 _name = msg.text.replace("Getname @","")
+                 _nametarget = _name.rstrip(" ")
+                 gs = cl.getGroup(msg.to)
+                 for h in gs.members:
+                   if _nametarget == h.displayName:
+                      cl.sendText(msg.to,"[DisplayName]:\n" + h.displayName )
+                   else:
+                     pass(.)
+#--------------------------------------------------------
+            elif msg.text in ["Creator gw"]:
+                msg.contentType = 13
+                msg.contentMetadata = {'mid': mid}
+                cl.sendMessage(msg)
+                jawab = ("This is my Creator","My creator is handsome","My creator is cool")
+                jawaban = random.choice(jawab)
+                tts = gTTS(text=jawaban, lang='en')
+                tts.save('tts.mp3')
+                cl.sendAudio(msg.to,'tts.mp3')
 #--------------------------------------------------------
             elif 'wikipedia ' in msg.text.lower():
                 try:
@@ -814,9 +897,21 @@ def bot(op):
                  tts = gTTS(psn, lang='id', slow=False)
                  tts.save('tts.mp3')
                  cl.sendAudio(msg.to, 'tts.mp3')
-
-#-----------------------------------------------
-
+#-------------------------------------------------
+            elif "/say-id " in msg.text:
+                say = msg.text.replace("/say-id ","")
+                lang = 'id'
+                tts = gTTS(text=say, lang=lang)
+                tts.save("hasil.mp3")
+                cl.sendAudio(msg.to,"hasil.mp3")
+#------------------------------------------------
+            elif "/say-en " in msg.text:
+                say = msg.text.replace("/say-en ","")
+                lang = 'en'
+                tts = gTTS(text=say, lang=lang)
+                tts.save("hasil.mp3")
+                cl.sendAudio(msg.to,"hasil.mp3")
+#-------------------------------------------------
 	    elif '/musik ' in msg.text.lower():
                 try:
                     songname = msg.text.lower().replace('/musik ','')
@@ -854,6 +949,11 @@ def bot(op):
 		tts = gTTS(text=jawaban, lang='id')
 		tts.save('tts.mp3')
     		cl.sendAudio(msg.to,'tts.mp3')
+            elif ("Hack " in msg.text):
+                   key = eval(msg.contentMetadata["MENTION"])
+                   key1 = key["MENTIONEES"][0]["M"]
+                   mi = cl.getContact(key1)
+                   cl.sendText(msg.to,"Mid:" +  key1)
 #--------------------------------------------------
             elif "Check:" in msg.text:
                     midd = msg.text.replace("Check:","")
@@ -1325,6 +1425,72 @@ def bot(op):
                     else:
                         cl.sendText(msg.to, "Belum ada viewers")
                     print "@viewseen"
+            elif msg.text == "Cek":
+                    cl.sendText(msg.to, "Set point.")
+                    try:
+                        del wait2['readPoint'][msg.to]
+                        del wait2['readMember'][msg.to]
+                    except:
+                           pass
+                    now2 = datetime.now()
+                    wait2['readPoint'][msg.to] = msg.id
+                    wait2['readMember'][msg.to] = ""
+                    wait2['setTime'][msg.to] = datetime.now().strftime('%Y-%m-%d %H:%M')
+                    wait2['ROM'][msg.to] = {}
+                    print wait2
+            elif msg.text == "Sider":
+                    if msg.to in wait2['readPoint']:
+                        if wait2["ROM"][msg.to].items() == []:
+                            chiya = ""
+                        else:
+                            chiya = ""
+                            for rom in wait2["ROM"][msg.to].items():
+                                print rom
+                                chiya += rom[1] + "\n"
+                        cl.sendText(msg.to, "╔═══════════════%s\n╠════════════════\n%s╠═══════════════\n║Readig point creation:\n║ [%s]\n╚════════════════"  % (wait2['readMember'][msg.to],chiya,setTime[msg.to]))
+                    else:
+                        cl.sendText(msg.to, "Ketik kau dulu Cek baru Sider")
+#--------------------------------------------------------------
+            elif msg.text == "Lurking":
+                    cl.sendText(msg.to, "「 Lurking」\nLurking is STARTING♪\n ' abort' to abort♪\n"+ datetime.today().strftime('%H:%M:%S'))
+                    try:
+                        del wait2['readPoint'][msg.to]
+                        del wait2['readMember'][msg.to]
+                    except:
+                        pass
+                    now2 = datetime.now()
+                    wait2['readPoint'][msg.to] = msg.id
+                    wait2['readMember'][msg.to] = ""
+                    wait2['ROM'][msg.to] = {}
+                    wait2['setTime'][msg.to] = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+                    print wait2
+
+            elif msg.text in ["Lurkers"]:
+                 if msg.toType == 2:
+                    print "\nRead aktif..."
+                    if msg.to in wait2['readPoint']:
+                        if wait2["ROM"][msg.to].items() == []:
+                            chiya = ""
+                        else:
+                            chiya = ""
+                            for rom in wait2["ROM"][msg.to].items():
+                                print rom
+                                chiya += rom[1] + "\n"
+                        cl.sendText(msg.to, "✜sɪᴅᴇʀ✜\n  ┏━━━━★ᴛᴇʀᴄʏᴅᴜᴋ★━━━━━┓                     %s\n┗━━━━★ᴛᴇʀᴄʏᴅᴜᴋ★━━━━━┛\n\n✜ᴛᴇʀsᴀɴɢᴋᴀ✜\n%s\n━━━━━━━━━━━━━━\nIn the last seen point:\n[%s]\n━━━━━━━━━━━━━━\nѕuppσrt вч:\n★ᴛᴇᴀᴍ ᴍᴀғɪᴀ ʙᴏᴛs★" % (wait2['readMember'][msg.to],chiya,setTime[msg.to]))
+                        print "\nReading Point Set..."
+                        try:
+                            del wait2['readPoint'][msg.to]
+                            del wait2['readMember'][msg.to]
+                        except:
+                            pass
+                        wait2['readPoint'][msg.to] = msg.id
+                        wait2['readMember'][msg.to] = ""
+                        wait2['setTime'][msg.to] = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+                        wait2['ROM'][msg.to] = {}
+                        print "lukers"
+                        cl.sendText(msg.to, "★ᴛᴇᴀᴍ ᴍᴀғɪᴀ ʙᴏᴛs★\nAuto set reading point in:\n" + (wait2['setTime'][msg.to]))
+                    else:
+                        cl.sendText(msg.to, "「 Lurking」\n^ketik lurking dulu goblog baru lurkers")
 #--------------------------------------------------------
 
 #KICK_BY_TAG
