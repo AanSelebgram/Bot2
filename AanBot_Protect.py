@@ -737,7 +737,7 @@ def bot(op):
                    if _nametarget == h.displayName:
                       cl.sendText(msg.to,"[DisplayName]:\n" + h.displayName )
                    else:
-                     pass(.)
+                     pass
 #--------------------------------------------------------
             elif msg.text in ["Creator gw"]:
                 msg.contentType = 13
